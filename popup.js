@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
+  const ultimateBtn = document.getElementById('ultimateBtn');
   const statusEl = document.getElementById('status');
   const refreshCountEl = document.getElementById('refreshCount');
   const totalCheckedEl = document.getElementById('totalChecked');
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const foundListEl = document.getElementById('foundList');
 
   let updateInterval = null;
+  let isUltimate = false;
 
   function updateUI(data) {
     if (data.isRunning) {
@@ -28,6 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshCountEl.textContent = data.refreshCount || 0;
     totalCheckedEl.textContent = data.totalChecked || 0;
 
+    if (data.isUltimate !== undefined) {
+      isUltimate = data.isUltimate;
+      if (isUltimate) {
+        ultimateBtn.classList.add('active');
+        ultimateBtn.textContent = 'ULTIMATE: ON';
+      } else {
+        ultimateBtn.classList.remove('active');
+        ultimateBtn.textContent = 'ULTIMATE MODE';
+      }
+    }
+
     if (data.foundNumbers && data.foundNumbers.length > 0) {
       foundSection.style.display = 'block';
       foundCountEl.textContent = data.foundNumbers.length;
@@ -40,10 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function sendMessage(type) {
+  async function sendMessage(type, extra = {}) {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const response = await chrome.tabs.sendMessage(tab.id, { type });
+      const response = await chrome.tabs.sendMessage(tab.id, { type, ...extra });
       return response;
     } catch (error) {
       console.error('Error:', error);
@@ -75,6 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(updateInterval);
         updateInterval = null;
       }
+    }
+  });
+
+  ultimateBtn.addEventListener('click', async () => {
+    isUltimate = !isUltimate;
+    const response = await sendMessage('setUltimate', { value: isUltimate });
+    if (response) {
+      updateUI({ isUltimate });
     }
   });
 

@@ -4,6 +4,7 @@
   'use strict';
 
   let isRunning = false;
+  let isUltimate = false;
   let refreshInterval = null;
   let refreshCount = 0;
   let stats = {
@@ -84,6 +85,36 @@
 
     const first4 = clean.substring(0, 4);
     const last4 = clean.substring(4, 8);
+
+    // Ultimate mode: check for 8484 in first 4
+    if (isUltimate && first4 === '8484') {
+      return { type: 'ultimate8484', value: '8484', block: 'first4' };
+    }
+
+    // Ultimate mode: check for 8484 in last 4
+    if (isUltimate && last4 === '8484') {
+      return { type: 'ultimate8484', value: '8484', block: 'last4' };
+    }
+
+    // Ultimate mode: check first4 === last4 (repeating pair)
+    if (isUltimate && first4 === last4) {
+      return { type: 'superRepeat', value: first4, block: 'full' };
+    }
+
+    // Ultimate mode: check last4 is reverse of first4 (full palindrome)
+    if (isUltimate && first4 === last4.split('').reverse().join('')) {
+      return { type: 'superPalindrome', value: clean, block: 'full' };
+    }
+
+    // Ultimate mode: check for 4 same digits anywhere
+    if (isUltimate) {
+      for (let i = 0; i <= clean.length - 4; i++) {
+        const d = clean[i];
+        if (clean[i+1] === d && clean[i+2] === d && clean[i+3] === d) {
+          return { type: 'superQuad', value: d.repeat(4), block: 'anywhere' };
+        }
+      }
+    }
 
     // Check first 4
     let result = checkBlock(first4);
@@ -271,16 +302,20 @@
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'start') {
       start();
-      sendResponse({ status: 'started', refreshCount, totalChecked: stats.totalChecked });
+      sendResponse({ status: 'started', refreshCount, totalChecked: stats.totalChecked, isUltimate });
     } else if (request.type === 'stop') {
       stop();
-      sendResponse({ status: 'stopped', refreshCount, totalChecked: stats.totalChecked });
+      sendResponse({ status: 'stopped', refreshCount, totalChecked: stats.totalChecked, isUltimate });
     } else if (request.type === 'getStatus') {
       sendResponse({
-        isRunning, refreshCount,
+        isRunning, refreshCount, isUltimate,
         totalChecked: stats.totalChecked,
         foundNumbers: stats.foundNumbers
       });
+    } else if (request.type === 'setUltimate') {
+      isUltimate = request.value;
+      console.log('[GOMO Finder] Ultimate mode:', isUltimate);
+      sendResponse({ isUltimate });
     }
     return true;
   });

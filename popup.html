@@ -166,6 +166,23 @@
       font-size: 10px;
       color: #666;
     }
+
+    .btn-ultimate {
+      background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+      color: white;
+      border: 2px solid #FFD700;
+    }
+
+    .btn-ultimate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
+    }
+
+    .btn-ultimate.active {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+      color: #333;
+      border-color: #9c27b0;
+    }
   </style>
 </head>
 <body>
@@ -192,6 +209,11 @@
   <button id="startBtn" class="btn btn-start">START SEARCH</button>
   <button id="stopBtn" class="btn btn-stop" disabled>STOP</button>
 
+  <button id="ultimateBtn" class="btn btn-ultimate" style="margin-top: 10px; padding: 10px;">ULTIMATE MODE</button>
+  <p style="color: #aaa; font-size: 10px; margin-top: 5px; text-align: center;">
+    Looks for 8484, super repeats, super palindromes & quads
+  </p>
+
   <div id="foundSection" style="display: none;">
     <div class="status-box">
       <div class="status-row">
@@ -212,6 +234,14 @@
       <span class="pattern-tag">Palindrome (1221)</span>
       <span class="pattern-tag">Repeated Pairs (8686)</span>
       <span class="pattern-tag">Mirror (12344321)</span>
+    </div>
+    <h3 style="margin-top: 10px;">Ultimate Mode Extras</h3>
+    <div class="pattern-list">
+      <span class="pattern-tag" style="background: rgba(156,39,176,0.3); color: #ce93d8;">8484 First</span>
+      <span class="pattern-tag" style="background: rgba(156,39,176,0.3); color: #ce93d8;">8484 Last</span>
+      <span class="pattern-tag" style="background: rgba(156,39,176,0.3); color: #ce93d8;">Super Repeat</span>
+      <span class="pattern-tag" style="background: rgba(156,39,176,0.3); color: #ce93d8;">Super Palindrome</span>
+      <span class="pattern-tag" style="background: rgba(156,39,176,0.3); color: #ce93d8;">Super Quad</span>
     </div>
   </div>
 
