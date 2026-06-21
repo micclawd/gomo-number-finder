@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 320px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      color: #FFD700;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .status-box {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .status-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-label {
+      color: #aaa;
+    }
+
+    .status-value {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .status-value.running {
+      color: #FF9800;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+      color: white;
+    }
+
+    .btn-stop:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(244, 67, 54, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .patterns {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 15px;
+    }
+
+    .patterns h3 {
+      font-size: 11px;
+      color: #FFD700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .pattern-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .pattern-tag {
+      background: rgba(255,215,0,0.2);
+      color: #FFD700;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 10px;
+    }
+
+    .found-list {
+      max-height: 100px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .found-item {
+      background: rgba(76, 175, 80, 0.2);
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      font-size: 11px;
+    }
+
+    .found-number {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .found-pattern {
+      color: #aaa;
+      font-size: 10px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>&#128241; GOMO Number Finder</h1>
+    <p>Find beautiful phone numbers automatically</p>
+  </div>
+
+  <div class="status-box">
+    <div class="status-row">
+      <span class="status-label">Status:</span>
+      <span id="status" class="status-value">Stopped</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Refreshed:</span>
+      <span id="refreshCount" class="status-value">0</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Numbers Checked:</span>
+      <span id="totalChecked" class="status-value">0</span>
+    </div>
+  </div>
+
+  <button id="startBtn" class="btn btn-start">START SEARCH</button>
+  <button id="stopBtn" class="btn btn-stop" disabled>STOP</button>
+
+  <div id="foundSection" style="display: none;">
+    <div class="status-box">
+      <div class="status-row">
+        <span class="status-label">Found:</span>
+        <span id="foundCount" class="status-value">0</span>
+      </div>
+      <div id="foundList" class="found-list"></div>
+    </div>
+  </div>
+
+  <div class="patterns">
+    <h3>Patterns Being Checked</h3>
+    <div class="pattern-list">
+      <span class="pattern-tag">Repeating (8888)</span>
+      <span class="pattern-tag">Triple (666)</span>
+      <span class="pattern-tag">Double Pairs (8866)</span>
+      <span class="pattern-tag">Sequential (1234)</span>
+      <span class="pattern-tag">Palindrome (1221)</span>
+      <span class="pattern-tag">Lucky Endings</span>
+      <span class="pattern-tag">Mirror (12344321)</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Navigate to gomo.sg/plan-detail/53 to use
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
