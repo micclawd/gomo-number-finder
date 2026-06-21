@@ -86,51 +86,32 @@
     const first4 = clean.substring(0, 4);
     const last4 = clean.substring(4, 8);
 
-    // Ultimate mode: check for 8484 in first 4
-    if (isUltimate && first4 === '8484') {
-      return { type: 'ultimate8484', value: '8484', block: 'first4' };
-    }
-
-    // Ultimate mode: check for 8484 in last 4
-    if (isUltimate && last4 === '8484') {
-      return { type: 'ultimate8484', value: '8484', block: 'last4' };
-    }
-
-    // Ultimate mode: check first4 === last4 (repeating pair)
-    if (isUltimate && first4 === last4) {
-      return { type: 'superRepeat', value: first4, block: 'full' };
-    }
-
-    // Ultimate mode: check last4 is reverse of first4 (full palindrome)
-    if (isUltimate && first4 === last4.split('').reverse().join('')) {
-      return { type: 'superPalindrome', value: clean, block: 'full' };
-    }
-
-    // Ultimate mode: check for 4 same digits anywhere
+    // Ultimate mode: ONLY check ultimate patterns
     if (isUltimate) {
+      if (first4 === '8484') return { type: 'ultimate8484', value: '8484', block: 'first4' };
+      if (last4 === '8484') return { type: 'ultimate8484', value: '8484', block: 'last4' };
+      if (first4 === last4) return { type: 'superRepeat', value: first4, block: 'full' };
+      if (first4 === last4.split('').reverse().join('')) return { type: 'superPalindrome', value: clean, block: 'full' };
       for (let i = 0; i <= clean.length - 4; i++) {
         const d = clean[i];
         if (clean[i+1] === d && clean[i+2] === d && clean[i+3] === d) {
           return { type: 'superQuad', value: d.repeat(4), block: 'anywhere' };
         }
       }
+      return null;
     }
 
-    // Check first 4
+    // Standard mode: check first 4
     let result = checkBlock(first4);
     if (result) return { ...result, block: 'first4' };
 
-    // Check last 4
+    // Standard mode: check last 4
     result = checkBlock(last4);
     if (result) return { ...result, block: 'last4' };
 
     // Full number mirror: 12344321
-    if (clean.length === 8) {
-      const firstHalf = clean.substring(0, 4);
-      const secondHalf = clean.substring(4, 8);
-      if (firstHalf === secondHalf.split('').reverse().join('')) {
-        return { type: 'mirror', value: clean, block: 'full' };
-      }
+    if (first4 === last4.split('').reverse().join('')) {
+      return { type: 'mirror', value: clean, block: 'full' };
     }
 
     return null;
@@ -226,9 +207,12 @@
 
     document.getElementById('gomo-finder-skip').addEventListener('click', () => {
       overlay.remove();
-      // Restart the search
-      isRunning = false;
-      start();
+      // Click Standard to refresh, then restart search
+      clickStandard();
+      setTimeout(() => {
+        isRunning = false;
+        start();
+      }, 500);
     });
 
     if (Notification.permission === 'granted') {
