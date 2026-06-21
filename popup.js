@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const foundSection = document.getElementById('foundSection');
   const foundCountEl = document.getElementById('foundCount');
   const foundListEl = document.getElementById('foundList');
-  const errorMsg = document.getElementById('errorMsg');
 
   let updateInterval = null;
 
@@ -41,34 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function showError(msg) {
-    if (errorMsg) {
-      errorMsg.style.display = 'block';
-      errorMsg.textContent = msg;
-    }
-  }
-
-  function hideError() {
-    if (errorMsg) {
-      errorMsg.style.display = 'none';
-    }
-  }
-
   async function sendMessage(type) {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-      if (!tab.url.includes('gomo.sg')) {
-        showError('Please navigate to gomo.sg first!');
-        return null;
-      }
-
-      hideError();
       const response = await chrome.tabs.sendMessage(tab.id, { type });
       return response;
     } catch (error) {
       console.error('Error:', error);
-      showError('Page not loaded. Please refresh the gomo.sg tab and try again.');
       return null;
     }
   }
