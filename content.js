@@ -67,14 +67,6 @@
       }
     }
 
-    // Lucky ending in block: 1688, 8866
-    const lucky = ['8888','6666','9999','888','666','999','168','188','886','668','866','88','66','99'];
-    for (const p of lucky) {
-      if (block.endsWith(p) && block.length >= 4) {
-        return { type: 'luckyEnding', value: p };
-      }
-    }
-
     // Repeated pairs: 8686, 1212
     if (block.length >= 4) {
       if (block[0] === block[2] && block[1] === block[3] && block[0] !== block[1]) {
@@ -169,10 +161,16 @@
         <p style="color: #e0e0e0; margin: 10px 0; font-size: 14px;">
           Checked ${refreshCount} times
         </p>
-        <button id="gomo-finder-close" style="
-          background: #FFD700; color: #333; border: none; padding: 15px 40px;
-          font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; margin-top: 20px;
-        ">GOT IT!</button>
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+          <button id="gomo-finder-skip" style="
+            background: #667eea; color: white; border: none; padding: 15px 30px;
+            font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer;
+          ">SKIP, KEEP SPINNING</button>
+          <button id="gomo-finder-close" style="
+            background: #FFD700; color: #333; border: none; padding: 15px 40px;
+            font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer;
+          ">GOT IT!</button>
+        </div>
       </div>
     `;
 
@@ -194,6 +192,13 @@
     } catch (e) {}
 
     document.getElementById('gomo-finder-close').addEventListener('click', () => overlay.remove());
+
+    document.getElementById('gomo-finder-skip').addEventListener('click', () => {
+      overlay.remove();
+      // Restart the search
+      isRunning = false;
+      start();
+    });
 
     if (Notification.permission === 'granted') {
       new Notification('GOMO Beautiful Number Found!', {
